@@ -16,6 +16,7 @@ import { Button } from '@/components/ui/button';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { add } from '@/redux/userSlice';
+import { toast } from 'react-toastify';
 
 
 
@@ -121,6 +122,7 @@ function Profile() {
       setError('Something went wrong');
     }finally{
       setSaving(false)
+      toast.success("Profile updated successfully!")
     }
   };
 
@@ -177,7 +179,7 @@ function Profile() {
                   <Button variant='default'>Close</Button>
                 </DialogClose>
                 <Button className={saving?'bg-gray-500 hover:bg-gray-500':''} variant='default' onClick={handleFileUpload}>
-                  {saving?'Saving':'Save'}
+                  {saving?'Saving..':'Save'}
                 </Button>
               </DialogFooter>
             </DialogContent>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { FaFacebookF, FaTwitter, FaInstagram } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
+import { ToastContainer, toast } from 'react-toastify';
 
 const Footer = () => {
   return (
@@ -46,6 +47,7 @@ const Footer = () => {
       <div className="text-center text-sm text-white mt-6">
         &copy; 2025 LMS. All rights reserved.
       </div>
+      <ToastContainer />
     </footer>
   );
 };

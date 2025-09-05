@@ -72,13 +72,6 @@ router.post('/login', async (req, res) => {
             const userToReturn = await User.findOne({ email });
             if (!userToReturn) {
                 return res.status(400).json({ success: false, message: "User not found" });
-                // await User.create({
-                //     name: payload.name,
-                //     email,
-                //     password: '',
-                //     isOauth: true,
-                //     picture: payload.picture,
-                // });
             }
             if(userToReturn.isTutor!=isTutor){
                 return res.status(400).json({ success: false, message: `Please login as ${userToReturn.isTutor?'tutor':'student'}` });

@@ -4,6 +4,7 @@ import connectToDB from './db/db.js';
 import User from './models/User.js'
 import authRouter from './routes/auth.js'
 import profileRouter from './routes/profile.js'
+import courseRouter from './routes/course.js'
 import cloudinaryRouter from './routes/cloudinary.js'
 import cors from 'cors'
 dotenv.config();
@@ -17,6 +18,7 @@ app.use(cors(corsOptions))
 
 app.use('/api/auth',authRouter)
 app.use('/api/profile',profileRouter)
+app.use('/api/course',courseRouter)
 app.use('/api/cloudinary',cloudinaryRouter)
 
 

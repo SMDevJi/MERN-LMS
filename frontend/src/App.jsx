@@ -10,6 +10,11 @@ import Contact from './pages/Contact'
 import Signup from './pages/Signup'
 import Login from './pages/Login'
 import Profile from './pages/Profile'
+import CreateCourse from './pages/CreateCourse'
+import CourseOrders from './pages/CourseOrders'
+import Dashboard from './pages/Dashboard'
+import AllCourses from './pages/AllCourses'
+import CourseDetails from './pages/CourseDetails'
 
 function App() {
 
@@ -23,6 +28,11 @@ function App() {
         <Route path='signup' element=<Signup /> />
         <Route path='login' element=<Login /> />
         <Route path='profile' element=<Profile /> />
+        <Route path='create-course' element=<CreateCourse /> />
+        <Route path='course-orders' element=<CourseOrders /> />
+        <Route path='dashboard' element=<Dashboard /> />
+        <Route path='all-courses' element=<AllCourses /> />
+        <Route path='course-details/:courseId' element=<CourseDetails /> />
       </Route>
     )
   )
