@@ -2,7 +2,7 @@ import express from "express";
 import User from "../models/User.js";
 import dotenv from 'dotenv';
 import authMiddleware from "../middleware/middleware.js";
-import { deleteImage } from "../utils/cloudinary.js";
+import { deleteFile } from "../utils/cloudinary.js";
 import jwt from 'jsonwebtoken'
 dotenv.config();
 
@@ -24,7 +24,7 @@ router.put('/update', authMiddleware, async (req, res) => {
         );
 
 
-        await deleteImage(oldUser.picture)
+        await deleteFile(oldUser.picture)
 
         const jwtToken = jwt.sign({
             id: updatedUser._id,

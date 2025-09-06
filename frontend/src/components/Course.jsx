@@ -22,19 +22,22 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FaPencilAlt } from "react-icons/fa";
 import { FaPlus } from 'react-icons/fa';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { Textarea } from "@/components/ui/textarea"
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
 } from "@/components/ui/select"
 
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 
-function Course({ product }) {
+
+function Course({ product, authorization }) {
     const [open, setOpen] = useState(false)
     const [error, setError] = useState('')
     const [saving, setSaving] = useState(false)
@@ -51,16 +54,111 @@ function Course({ product }) {
 
     const navigate = useNavigate()
 
+    const getSignature = async () => {
+        const res = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/api/cloudinary/generate-signature`,
+            { field: 'Thumbnail' },
+            {
+                headers: { Authorization: `Bearer ${authorization}` },
+            }
+        );
+        return res.data.signature;
+    };
 
 
+    const uploadImageToCloudinary = async () => {
+        try {
+            const { timestamp, signature, apiKey, cloudName, folder } = await getSignature();
 
-    const handleSubmit=()=>{
+            const formData = new FormData();
+            formData.append('file', image);
+            formData.append('api_key', apiKey);
+            formData.append('timestamp', timestamp);
+            formData.append('signature', signature);
+            formData.append('folder', folder);
+
+            const res = await axios.post(
+                `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+                formData,
+                {
+                    headers: { 'Content-Type': 'multipart/form-data' },
+                }
+            );
+
+            if (res.data?.secure_url) {
+                toast.success('Thumbnail uploaded successfully!')
+                return res.data.secure_url;
+            } else {
+                toast.error('Failed to get image url!');
+            }
+
+        } catch (error) {
+            console.error('Image upload failed:', error);
+            toast.error("Failed to upload thumbnail!");
+            return null;
+        }
+    };
+
+
+    const handleSubmit = async (e) => {
+        e.preventDefault()
+        setUploading(true)
+        try {
+            if (!title || !subtitle || !description || !category || !price || !whatsLearned) {
+                toast.error("Please fill out all required fields!");
+                setUploading(false)
+                return;
+            }
+
+            if (!image) {
+                toast.error("Please upload a thumbnail image!");
+                setUploading(false)
+                return;
+            }
+
+            const thumbnail = await uploadImageToCloudinary()
+            if (!thumbnail) {
+                setUploading(false)
+                return;
+            }
+            const options = {
+                method: 'PUT',
+                url: `${import.meta.env.VITE_BACKEND_URL}/api/course/update`,
+                headers: { Authorization: `Bearer ${authorization}` },
+                data: {
+                    courseId: product._id,
+                    title: title,
+                    subtitle: subtitle,
+                    description: description,
+                    category: category,
+                    price: price,
+                    whatsLearned: whatsLearned,
+                    language: language,
+                    thumbnail: thumbnail
+                }
+            };
+
+            axios.request(options).then(function (response) {
+                console.log(response.data);
+                if (response.data.success) {
+                    toast.success("Course updated succerssfully!")
+                    setOpen(false)
+                    navigate('/dashboard')
+                } else {
+                    toast.error("Error updating course!")
+                }
+            }).catch(function (error) {
+                console.error(error);
+                toast.error("Error updating course!")
+            }).finally(() => setUploading(false))
+
+        } catch (error) {
+            toast.error('Something went wrong!')
+        }
 
     }
 
-    const handleFileUpload=()=>{
 
-    }
     return (
         <Card className="w-full my-3 p-5 flex flex-row justify-between">
             <h1 className='font-semibold'>{product.title}</h1>
@@ -75,7 +173,7 @@ function Course({ product }) {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-md max-h-full overflow-y-auto">
                         <DialogHeader>
-                            <DialogTitle>Edit Profile</DialogTitle>
+                            <DialogTitle>Edit Course</DialogTitle>
                         </DialogHeader>
                         <div className="flex items-center gap-2">
                             <div className="grid flex-1 gap-2">
@@ -168,6 +266,11 @@ function Course({ product }) {
                                                         <img src={URL.createObjectURL(image)} alt="Thumbnail Preview" className="w-full h-auto" />
                                                     </div>
                                                 )}
+                                                {preThumb && (
+                                                    <div className="img-preview">
+                                                        <img src={preThumb} alt="Thumbnail Preview" className="w-full h-auto" />
+                                                    </div>
+                                                )}
 
                                             </div>
                                             <div className="grid w-full max-w-sm items-center gap-3">
@@ -175,13 +278,16 @@ function Course({ product }) {
                                                 <Input id="thumbnail"
                                                     type="file"
                                                     accept="image/*"
-                                                    onChange={(e) => setImage(e.target.files[0])} />
+                                                    onChange={(e) => {
+                                                        setPreThumb(null)
+                                                        return setImage(e.target.files[0])
+                                                    }} />
                                             </div>
 
                                         </div>
 
                                         <Button onClick={handleSubmit} className={`w-full ${uploading ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
-                                            {uploading ? 'Creating Course..' : 'Create Course'}
+                                            {uploading ? 'Updating Course..' : 'Update Course'}
                                         </Button>
                                     </div>
                                 </form>
@@ -196,12 +302,11 @@ function Course({ product }) {
 
 
 
-
-
-
-                <Button variant='secondary'>
-                    <FaPlus /> Add Lecture
-                </Button>
+                <Link to={`/add-lecture/${product._id}`}>
+                    <Button variant='secondary'>
+                        <FaPlus /> Add Lecture
+                    </Button>
+                </Link>
             </div>
         </Card>
     )

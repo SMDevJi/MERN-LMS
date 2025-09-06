@@ -39,6 +39,7 @@ function Profile() {
     }
   } catch (err) {
     console.error("Invalid token");
+    navigate("/login")
   }
 
   useEffect(() => {

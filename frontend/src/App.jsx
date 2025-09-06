@@ -15,6 +15,8 @@ import CourseOrders from './pages/CourseOrders'
 import Dashboard from './pages/Dashboard'
 import AllCourses from './pages/AllCourses'
 import CourseDetails from './pages/CourseDetails'
+import AddLecture from './pages/AddLecture'
+
 
 function App() {
 
@@ -33,6 +35,7 @@ function App() {
         <Route path='dashboard' element=<Dashboard /> />
         <Route path='all-courses' element=<AllCourses /> />
         <Route path='course-details/:courseId' element=<CourseDetails /> />
+        <Route path='add-lecture/:courseId' element=<AddLecture /> />
       </Route>
     )
   )

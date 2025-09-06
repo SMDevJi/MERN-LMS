@@ -26,7 +26,7 @@ export const generateUploadSignature = (folder) => {
 };
 
 
-export const deleteImage = async (url) => {
+export const deleteFile = async (url) => {
     if (!url.includes("cloudinary")) return
 
     const afterUpload = url.split('/upload/')[1];
@@ -36,7 +36,7 @@ export const deleteImage = async (url) => {
     //console.log(id, url)
     try {
         const result = await cloudinary.uploader.destroy(id, { invalidate: true });
-        //console.log(result)
+        console.log(result)
         return result;
     } catch (error) {
         console.error('❌ Cloudinary Delete Error:', error);

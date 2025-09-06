@@ -37,7 +37,18 @@ function CreateCourse() {
   const navigate = useNavigate()
 
   const authorization = useSelector((state) => state.user.authorization);
-  const decoded = jwtDecode(authorization)
+  let decoded = null;
+
+  try {
+    if (authorization) {
+      //console.log(authorization)
+      decoded = jwtDecode(authorization);
+    }
+  } catch (err) {
+    console.error("Invalid token");
+    navigate("/login")
+  }
+
   useEffect(() => {
     if (!authorization || !decoded) {
       toast.error("Please Login to continue!")
@@ -158,10 +169,10 @@ function CreateCourse() {
 
 
   return (
-    <div className="container p-3 min-h-[85vh] flex justify-center">
+    <div className="w-full form-container p-3 min-h-[85vh] flex justify-center">
 
-      <div className="flex w-full max-w-sm items-center gap-2">
-        <Card className="w-full max-w-sm">
+      <div className="flex w-full max-w-xl items-center gap-2">
+        <Card className="w-full max-w-xl">
           <CardHeader>
             <CardTitle className="text-2xl">Create New Course</CardTitle>
           </CardHeader>

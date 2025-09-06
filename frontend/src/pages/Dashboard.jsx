@@ -2,10 +2,44 @@ import React, { useState, useEffect } from 'react'
 import Loading from '../components/Loading';
 import axios from 'axios';
 import Course from '@/components/Course';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
 
 function Dashboard() {
     const [courses, setCourses] = useState([])
     const [loading, setLoading] = useState(false);
+    const authorization = useSelector((state) => state.user.authorization);
+    const navigate = useNavigate()
+
+
+    let decoded = null;
+
+    try {
+        if (authorization) {
+            //console.log(authorization)
+            decoded = jwtDecode(authorization);
+        }
+    } catch (err) {
+        console.error("Invalid token");
+        navigate("/login")
+    }
+
+    useEffect(() => {
+        if (!authorization || !decoded) {
+            navigate('/login');
+            return;
+        }
+
+        const currentTime = Date.now() / 1000;
+        if (decoded.exp < currentTime) {
+            navigate('/login');
+            return;
+        }
+
+    }, [authorization, navigate]);
+
 
 
     useEffect(() => {
@@ -39,10 +73,12 @@ function Dashboard() {
                 <h1 className='text-xl font-semibold mb-3'>Your Courses</h1>
                 <div className="courses w-full">
                     {loading ? <Loading /> :
-
-                        courses.map(course =>
-                            <Course key={course._id} product={course} />
-                        )
+                        courses.map(course => {
+                            if (decoded && course.tutorId === decoded.id) {
+                                return <Course key={course._id} product={course} authorization={authorization} />
+                            }
+                            return null;
+                        })
                     }
                 </div>
             </div>
