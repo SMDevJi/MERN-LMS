@@ -181,8 +181,8 @@ function Lecture({ lecture, authorization, onUpdate }) {
     }
 
     return (
-        <Card className="w-full my-3 p-5 flex flex-col sm:flex-row justify-between">
-            <h1 className='font-semibold'>{lecture.title}</h1>
+        <Card className="w-full my-3 p-3 flex flex-col sm:flex-row justify-between">
+            <h1 className='font-semibold max-w-[60%]'>{lecture.title}</h1>
             <div className="buttons">
 
 
