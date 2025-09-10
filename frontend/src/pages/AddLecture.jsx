@@ -15,11 +15,12 @@ import { toast } from 'react-toastify'
 import axios from 'axios'
 import { useSelector } from 'react-redux'
 import { jwtDecode } from 'jwt-decode'
-
 import Lecture from '@/components/Lecture'
+import { isJwtExpired } from '@/utils/utilities'
 
 function AddLecture() {
     const { courseId } = useParams();
+    console.log(courseId)
     const navigate = useNavigate();
     const authorization = useSelector((state) => state.user.authorization);
 
@@ -89,6 +90,7 @@ function AddLecture() {
         });
 
         setUploadProgress(0);
+        console.log(res.data)
         return res.data.secure_url;
     };
 
@@ -111,8 +113,8 @@ function AddLecture() {
             return;
         }
 
-        const currentTime = Date.now() / 1000;
-        if (decoded.exp < currentTime) {
+
+        if (isJwtExpired(authorization)) {
             console.warn("Token expired");
             navigate('/login');
             return;
@@ -125,8 +127,13 @@ function AddLecture() {
 
     const loadCourse = async (decoded) => {
         try {
-            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/course/get-course`, {
-                params: { courseId }
+            const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/course/get-editable-course`, {
+                params: { courseId },
+                headers: {
+                    Authorization: `Bearer ${authorization}`
+                },
+
+
             });
 
             if (response.data.success) {

@@ -15,9 +15,11 @@ function CourseSection({ courses, isAllPage }) {
                     <>
                     </>
                     :
-                    <button className='text-base bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400 font-medium  p-2 px-4 rounded-md mx-3'>
-                        <Link to='/all-courses'>View All</Link>
-                    </button>
+                    <Link to='/all-courses'>
+                        <button className='cursor-pointer text-base bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400 font-medium  p-2 px-4 rounded-md mx-3'>
+                            View All
+                        </button>
+                    </Link>
                 }
 
             </div>

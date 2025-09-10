@@ -5,7 +5,7 @@ import Course from '@/components/Course';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { jwtDecode } from 'jwt-decode';
-
+import { isJwtExpired } from '@/utils/utilities';
 
 function Dashboard() {
     const [courses, setCourses] = useState([])
@@ -32,8 +32,8 @@ function Dashboard() {
             return;
         }
 
-        const currentTime = Date.now() / 1000;
-        if (decoded.exp < currentTime) {
+        
+        if (isJwtExpired(authorization)) {
             navigate('/login');
             return;
         }
@@ -75,7 +75,7 @@ function Dashboard() {
                     {loading ? <Loading /> :
                         courses.map(course => {
                             if (decoded && course.tutorId === decoded.id) {
-                                return <Course key={course._id} product={course} authorization={authorization} />
+                                return <Course key={course._id} product={course} authorization={authorization} onCourseChange={setCourses}/>
                             }
                             return null;
                         })

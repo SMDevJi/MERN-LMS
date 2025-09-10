@@ -23,9 +23,10 @@ router.put('/update', authMiddleware, async (req, res) => {
             { new: true }
         );
 
-
-        await deleteFile(oldUser.picture)
-
+        if(oldUser.picture!=picture){
+            await deleteFile(oldUser.picture)
+        }
+        
         const jwtToken = jwt.sign({
             id: updatedUser._id,
             name: updatedUser.name,

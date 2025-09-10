@@ -16,7 +16,8 @@ import Dashboard from './pages/Dashboard'
 import AllCourses from './pages/AllCourses'
 import CourseDetails from './pages/CourseDetails'
 import AddLecture from './pages/AddLecture'
-
+import PaymentSuccess from './pages/PaymentSuccess'
+import WatchCourse from './pages/WatchCourse'
 
 function App() {
 
@@ -36,6 +37,8 @@ function App() {
         <Route path='all-courses' element=<AllCourses /> />
         <Route path='course-details/:courseId' element=<CourseDetails /> />
         <Route path='add-lecture/:courseId' element=<AddLecture /> />
+        <Route path='payment-success/:courseId' element=<PaymentSuccess /> />
+        <Route path='watch-course/:courseId' element=<WatchCourse /> />
       </Route>
     )
   )

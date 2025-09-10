@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FaPencilAlt } from 'react-icons/fa'
 import {
     Dialog,
@@ -15,6 +15,18 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
+import { Progress } from "@/components/ui/progress"
 import { Switch } from "@/components/ui/switch"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -34,7 +46,63 @@ function Lecture({ lecture, authorization, onUpdate }) {
     const [title, setTitle] = useState(lecture.title)
     const [isFree, setIsFree] = useState(lecture.isFree)
 
-    const navigate = useNavigate()
+    const [uploading, setUploading] = useState(false)
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [courseVideo, setCourseVideo] = useState(null);
+    const [videoPreviewUrl, setVideoPreviewUrl] = useState(null);
+
+    useEffect(() => {
+        if (!courseVideo) return;
+
+        const objectUrl = URL.createObjectURL(courseVideo);
+        setVideoPreviewUrl(objectUrl);
+
+        return () => {
+            URL.revokeObjectURL(objectUrl);
+        };
+    }, [courseVideo]);
+
+    const getSignature = async () => {
+        const res = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/api/cloudinary/generate-signature`,
+            { field: 'Lecture' },
+            {
+                headers: { Authorization: `Bearer ${authorization}` },
+            }
+        );
+        return res.data.signature;
+    };
+
+    const uploadVideoToCloudinary = async () => {
+        setUploading(true)
+        const { timestamp, signature, apiKey, cloudName, folder } = await getSignature();
+
+        const formData = new FormData();
+        formData.append('file', courseVideo);
+        formData.append('api_key', apiKey);
+        formData.append('timestamp', timestamp);
+        formData.append('signature', signature);
+        formData.append('folder', folder);
+
+        const res = await axios.post(
+            `https://api.cloudinary.com/v1_1/${cloudName}/auto/upload`,
+            formData,
+            {
+                headers: { 'Content-Type': 'multipart/form-data' },
+                onUploadProgress: (progressEvent) => {
+                    const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total);
+                    setUploadProgress(percentCompleted);
+                }
+            }
+        ).finally(() => {
+            setUploading(false)
+        });
+
+        setUploadProgress(0);
+        console.log(res.data)
+        return res.data.secure_url;
+    };
+
 
     const deleteLecture = () => {
         const options = {
@@ -61,15 +129,36 @@ function Lecture({ lecture, authorization, onUpdate }) {
         });
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
+        setUpdating(true)
+
+        if (!title) {
+            toast.error("Title is required!");
+            setUpdating(false)
+            return;
+        }
+
+        let lectureUrl;
+        if (!courseVideo) {
+            lectureUrl = lecture.url
+        } else {
+            lectureUrl = await uploadVideoToCloudinary()
+            if (!lectureUrl) {
+                toast.error("Failed to upload lecture!")
+                setUpdating(false)
+                return
+            }
+        }
+
+
         const options = {
             method: 'PUT',
             url: `${import.meta.env.VITE_BACKEND_URL}/api/course/lectures/update`,
             headers: {
                 Authorization: `Bearer ${authorization}`
             },
-            data: { lectureId: lecture._id, title: title, isFree: isFree }
+            data: { lectureId: lecture._id, url: lectureUrl, title: title, isFree: isFree }
         };
 
         axios.request(options).then(function (response) {
@@ -77,6 +166,8 @@ function Lecture({ lecture, authorization, onUpdate }) {
                 console.log(response.data);
                 toast.success('Lecture updated successfully!')
                 setOpen(false)
+                setVideoPreviewUrl(null)
+                setCourseVideo(null)
                 onUpdate()
             } else {
                 toast.error('Failed to update lecture!')
@@ -84,18 +175,20 @@ function Lecture({ lecture, authorization, onUpdate }) {
         }).catch(function (error) {
             console.error(error);
             toast.error('Failed to update lecture!')
+        }).finally(() => {
+            setUpdating(false)
         });
     }
 
     return (
-        <Card className="w-full my-3 p-5 flex flex-row justify-between">
+        <Card className="w-full my-3 p-5 flex flex-col sm:flex-row justify-between">
             <h1 className='font-semibold'>{lecture.title}</h1>
             <div className="buttons">
 
 
                 <Dialog open={open} onOpenChange={setOpen} >
                     <DialogTrigger asChild>
-                        <Button variant='outline'>
+                        <Button variant='outline' className='cursor-pointer'>
                             <FaPencilAlt /> Edit
                         </Button>
                     </DialogTrigger>
@@ -125,9 +218,44 @@ function Lecture({ lecture, authorization, onUpdate }) {
                                                 onCheckedChange={setIsFree} />
                                         </div>
                                         <div className="video-preview">
+                                            <h1 className='text-sm font-semibold' >Current Video:</h1>
                                             <video src={lecture.url} className="w-full max-h-60" controls />
                                         </div>
-                                        <Button onClick={handleSubmit} className={`w-full mt-3${updating ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
+
+
+
+
+                                        {courseVideo && (
+                                            <div className="new-video-preview mt-6">
+                                                <h1 className='mb-2 font-semibold text-sm'>New Video..</h1>
+                                                <video src={videoPreviewUrl} className="w-full max-h-60" controls />
+                                            </div>
+                                        )}
+                                        <div className="grid w-full max-w-sm items-center gap-3">
+                                            <Label htmlFor="courseVideo">Choose new video:</Label>
+                                            <Input
+                                                id="courseVideo"
+                                                type="file"
+                                                accept="video/*"
+                                                onChange={(e) => setCourseVideo(e.target.files[0])}
+                                            />
+                                        </div>
+                                        <div className="grid w-full items-center gap-3">
+                                            {uploading ? <div className='my-6'>
+                                                <h1 className='mb-2 font-semibold text-sm'>Uploading Video..</h1>
+                                                <Progress value={uploadProgress} className="w-full" />
+                                            </div>
+                                                : ""}
+
+                                        </div>
+
+
+
+
+
+
+
+                                        <Button onClick={handleSubmit} className={`w-full mt-3 ${updating ? 'bg-gray-500 hover:bg-gray-500' : ''}`}>
                                             {updating ? 'Updating Lecture..' : 'Update Lecture'}
                                         </Button>
                                     </div>
@@ -141,11 +269,29 @@ function Lecture({ lecture, authorization, onUpdate }) {
                     </DialogContent>
                 </Dialog>
 
+                <AlertDialog>
+                    <AlertDialogTrigger>
+                        <Button variant='destructive' className='ml-2 cursor-pointer' type='button'>
+                            <MdDelete /> Delete
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Delete <span className='text-blue-500'>{lecture.title}</span>?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete '{lecture.title}'.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={deleteLecture} >Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
 
 
-                <Button variant='destructive' className='ml-2' onClick={deleteLecture} type='button'>
-                    <MdDelete /> Delete
-                </Button>
+
+
 
             </div>
         </Card>

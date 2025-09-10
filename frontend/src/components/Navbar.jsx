@@ -50,7 +50,7 @@ function Navbar() {
           </Link>
         </div>
         <div className={`${isScrolled ? 'text-violet-900' : 'text-violet-300'} links text-sm h-full sm:flex hidden items-center`}>
-          <ul className={`flex ${decoded?.isTutor?'gap-3':'gap-4'} `}>
+          <ul className={`flex ${decoded?.isTutor ? 'gap-3' : 'gap-4'} `}>
             <li><Link to='/'>Home</Link></li>
 
             {decoded?.isTutor ? (
@@ -74,34 +74,40 @@ function Navbar() {
 
           {authorization == '' ?
             <>
-              <button
-                className={`text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2 px-4 rounded-md mx-3`}
-              >
-                <Link to='/login'>Login</Link>
-              </button>
+              <Link to='/login'>
+                <button
+                  className={`cursor-pointer text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2 px-4 rounded-md mx-3`}
+                >
+                  Login
+                </button>
+              </Link>
             </>
             :
             <>
 
 
-            {decoded?.isTutor ? (
-              <button
-                className={`text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2 rounded-md `}
-              >
-                <Link to='/dashboard'>Dashboard</Link>
-              </button>
-            ) : (
-              <button
-                className={`text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2  rounded-md mx-3`}
-              >
-                <Link to='/profile'>Profile</Link>
-              </button>
-            )}
+              {decoded?.isTutor ? (
+                <Link to='/dashboard'>
+                  <button
+                    className={`cursor-pointer text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2 rounded-md `}
+                  >
+                    Dashboard
+                  </button>
+                </Link>
+              ) : (
+                <Link to='/profile'>
+                  <button
+                    className={`cursor-pointer text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2  rounded-md mx-3`}
+                  >
+                    Profile
+                  </button>
+                </Link>
+              )}
 
-              
+
               <button
                 onClick={handleLogout}
-                className={`text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2  rounded-md mx-3`}
+                className={`cursor-pointer text-base  ${isScrolled ? 'bg-white text-purple-600 hover:text-purple-400 shadow-sm shadow-purple-400' : 'bg-purple-600 hover:bg-purple-700'} font-medium  p-2  rounded-md mx-3`}
               >
                 Logout
               </button>

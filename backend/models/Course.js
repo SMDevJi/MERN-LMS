@@ -34,7 +34,7 @@ const courseSchema = new Schema({
   },
   tutorId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
+    ref: 'user'
   },
   tutor: {
     type: String,
@@ -69,6 +69,11 @@ const courseSchema = new Schema({
   lectures: {
     type: [lectureSchema],
     default: []
+  },
+  polarProductId: {
+    type: String,
+    required: true,
+    default:''
   }
 }, {
   timestamps: true

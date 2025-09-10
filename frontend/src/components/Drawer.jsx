@@ -51,33 +51,39 @@ export default function Drawer({ authorization, handleLogout, decoded }) {
                 </div>
                 {authorization == '' ?
                     <>
-                        <button
-                            className="mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
-                        >
-                            <Link to='/login'>Login</Link>
-                        </button>
+                        <Link to='/login'>
+                            <button
+                                className=" cursor-pointer mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
+                            >
+                                Login
+                            </button>
+                        </Link>
                     </>
                     :
                     <>
 
                         {decoded?.isTutor ? (
-                            <button
-                                className="mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
-                            >
-                                <Link to='/dashboard'>Dashboard</Link>
-                            </button>
+                            <Link to='/dashboard'>
+                                <button
+                                    className="cursor-pointer mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
+                                >
+                                    Dashboard
+                                </button>
+                            </Link>
                         ) : (
-                            <button
-                                className="mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
-                            >
-                                <Link to='/profile'>Profile</Link>
-                            </button>
+                            <Link to='/profile'>
+                                <button
+                                    className="cursor-pointer mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
+                                >
+                                    Profile
+                                </button>
+                            </Link>
                         )}
 
 
                         <button
                             onClick={handleLogout}
-                            className="mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
+                            className="cursor-pointer mt-3 ml-6 text-base text-black font-medium bg-white hover:bg-gray-200 p-2 px-4 rounded-md"
                         >
                             Logout
                         </button>

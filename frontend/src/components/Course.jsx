@@ -18,6 +18,17 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { FaPencilAlt } from "react-icons/fa";
@@ -34,10 +45,10 @@ import {
 
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import { MdDelete } from 'react-icons/md';
 
 
-
-function Course({ product, authorization }) {
+function Course({ product, authorization, onCourseChange }) {
     const [open, setOpen] = useState(false)
     const [error, setError] = useState('')
     const [saving, setSaving] = useState(false)
@@ -48,7 +59,7 @@ function Course({ product, authorization }) {
     const [price, setPrice] = useState(product.price);
     const [whatsLearned, setWhatsLearned] = useState(product.whatsLearned);
     const [language, setLanguage] = useState('English');
-    const [image, setImage] = useState(null);
+    const [image, setImage] = useState();
     const [preThumb, setPreThumb] = useState(product.thumbnail)
     const [uploading, setUploading] = useState(false)
 
@@ -87,6 +98,7 @@ function Course({ product, authorization }) {
 
             if (res.data?.secure_url) {
                 toast.success('Thumbnail uploaded successfully!')
+                console.log(res.data)
                 return res.data.secure_url;
             } else {
                 toast.error('Failed to get image url!');
@@ -100,6 +112,32 @@ function Course({ product, authorization }) {
     };
 
 
+    const deleteCourse = () => {
+        const options = {
+            method: 'DELETE',
+            url: `${import.meta.env.VITE_BACKEND_URL}/api/course/delete`,
+            headers: {
+                Authorization: `Bearer ${authorization}`
+            },
+            data: { courseId: product._id }
+        };
+
+        axios.request(options).then(function (response) {
+            if (response.data.success) {
+                console.log(response.data);
+                toast.success('Course deleted successfully!')
+                onCourseChange(response.data.courses)
+            } else {
+                toast.error('Failed to delete Course!')
+            }
+
+        }).catch(function (error) {
+            console.error(error);
+            toast.error('Failed to delete Course!')
+        });
+    }
+
+
     const handleSubmit = async (e) => {
         e.preventDefault()
         setUploading(true)
@@ -110,17 +148,16 @@ function Course({ product, authorization }) {
                 return;
             }
 
-            if (!image) {
-                toast.error("Please upload a thumbnail image!");
-                setUploading(false)
-                return;
+            let thumbnail = preThumb;
+            if (image) {
+                const uploadedUrl = await uploadImageToCloudinary();
+                if (!uploadedUrl) {
+                    setUploading(false);
+                    return;
+                }
+                thumbnail = uploadedUrl;
             }
 
-            const thumbnail = await uploadImageToCloudinary()
-            if (!thumbnail) {
-                setUploading(false)
-                return;
-            }
             const options = {
                 method: 'PUT',
                 url: `${import.meta.env.VITE_BACKEND_URL}/api/course/update`,
@@ -143,7 +180,7 @@ function Course({ product, authorization }) {
                 if (response.data.success) {
                     toast.success("Course updated succerssfully!")
                     setOpen(false)
-                    navigate('/dashboard')
+                    onCourseChange(response.data.courses)
                 } else {
                     toast.error("Error updating course!")
                 }
@@ -160,14 +197,14 @@ function Course({ product, authorization }) {
 
 
     return (
-        <Card className="w-full my-3 p-5 flex flex-row justify-between">
+        <Card className="w-full my-3 p-5 flex flex-col sm:flex-row justify-between">
             <h1 className='font-semibold'>{product.title}</h1>
             <div className="buttons">
 
 
                 <Dialog open={open} onOpenChange={setOpen} >
                     <DialogTrigger asChild>
-                        <Button variant='outline'>
+                        <Button variant='outline' className='cursor-pointer'>
                             <FaPencilAlt /> Edit
                         </Button>
                     </DialogTrigger>
@@ -303,10 +340,34 @@ function Course({ product, authorization }) {
 
 
                 <Link to={`/add-lecture/${product._id}`}>
-                    <Button variant='secondary'>
+                    <Button variant='secondary' className='cursor-pointer'>
                         <FaPlus /> Add Lecture
                     </Button>
                 </Link>
+
+
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button variant='destructive' className='ml-2 cursor-pointer' type='button'>
+                            <MdDelete />
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Delete <span className='text-blue-500'>{product.title}</span>?</AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete '{product.title}'.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={deleteCourse} >Continue</AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
+
+
             </div>
         </Card>
     )
