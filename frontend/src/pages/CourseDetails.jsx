@@ -120,7 +120,10 @@ function CourseDetails() {
 
 
     if (loading) {
-        return <Loading />
+        return <div className='wrapper min-h-[80vh] px-4'>
+            <Loading />
+        </div>
+        
     }
 
     return (

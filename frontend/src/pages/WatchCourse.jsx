@@ -166,7 +166,7 @@ function WatchCourse() {
                                                 }}
                                             />
                                             <p className="max-w-[200px]">
-                                                {lecture.title.length > 25 ? lecture.title.slice(0, 25) + '...' : lecture.title}
+                                                {lecture.title.length > 22 ? lecture.title.slice(0, 22) + '...' : lecture.title}
                                             </p>
                                         </div>
                                         <FaVideo size={20} className="min-w-[20px]" />
@@ -189,7 +189,7 @@ function WatchCourse() {
                                         <CardTitle className='text-xl break-all'>
                                             Now Watching: <br />
                                             <span className='text-red-400'>
-                                                {lectureTitle.length > 500 ? lectureTitle.slice(0, 500) + '...' : lectureTitle}
+                                                
                                             </span>
                                         </CardTitle>
                                     </CardHeader>

@@ -86,7 +86,7 @@ function Home() {
                           <FaQuoteRight className='text-5xl text-gray-500' />
                           <p className='text-base italic text-gray-700'>" {feedback.comment} "</p>
                           <img
-                            src={feedback.user.picture}
+                            src={feedback.user.picture || "/default-profile.png"}
                             alt="profile"
                             className='w-20 h-20 rounded-full border-2 border-gray-200'
                           />
