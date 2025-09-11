@@ -186,8 +186,8 @@ function WatchCourse() {
                                 :
                                 <>
                                     <CardHeader>
-                                        <CardTitle className='text-xl break-all'>
-                                            Now Watching: <br />
+                                        <CardTitle className=' text-xl break-all'>
+                                            Now Watching: <span className='text-red-400'>{lectureTitle}</span><br />
                                             <span className='text-red-400'>
                                                 
                                             </span>
