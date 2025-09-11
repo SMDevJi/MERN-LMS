@@ -13,7 +13,7 @@ import Loading from '@/components/Loading';
 import Error from '@/components/Error';
 import { useSelector } from 'react-redux';
 import { isJwtExpired } from '@/utils/utilities';
-
+import '../App.css'
 
 function WatchCourse() {
     const authorization = useSelector((state) => state.user.authorization);
@@ -143,11 +143,11 @@ function WatchCourse() {
                             <CardHeader>
                                 <CardTitle className='text-xl'>Lectures</CardTitle>
                             </CardHeader>
-                            <CardContent className='grid gap-2 w-full px-0 md:px-6 max-h-[50vh] overflow-scroll'>
+                            <CardContent className='grid gap-2 w-full px-3 md:px-6 max-h-[50vh] overflow-scroll'>
                                 {watchData.course?.lectures?.map((lecture) => (
                                     <div
                                         key={lecture._id}
-                                        className={`rounded-md w-full p-3  lecture flex items-center justify-between text-lg font-semibold cursor-pointer ${selectedLectureId === lecture._id ? 'bg-gray-300 ' : 'bg-green-100'
+                                        className={`rounded-md w-full p-3  lecture flex items-center justify-between text-lg font-semibold cursor-pointer ${selectedLectureId === lecture._id ? ' bg-green-300 ' : 'bg-green-100'
                                             }`}
                                         onClick={() => {
                                             setLectureUrl(lecture.url);
@@ -155,18 +155,18 @@ function WatchCourse() {
                                             setSelectedLectureId(lecture._id);
                                         }}
                                     >
-                                        <div className="flex items-center gap-3 overflow-hidden">
+                                        <div className="flex items-center gap-1 ">
                                             <input
                                                 type='checkbox'
-                                                className='h-5 w-5'
+                                                className=''
                                                 checked={completedLectures.includes(lecture._id)}
                                                 onChange={(e) => {
                                                     e.stopPropagation();
                                                     handleCheckboxClick(lecture._id);
                                                 }}
                                             />
-                                            <p className="max-w-[200px]">
-                                                {lecture.title.length > 22 ? lecture.title.slice(0, 22) + '...' : lecture.title}
+                                            <p className=" flexible-text">
+                                                {lecture.title}
                                             </p>
                                         </div>
                                         <FaVideo size={20} className="min-w-[20px]" />
