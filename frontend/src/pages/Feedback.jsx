@@ -50,8 +50,10 @@ function Feedback() {
     }, [authorization]);
 
 
-    if(error){
-        return <Error text='Please login to submit feedback!' />
+    if (error) {
+        return <div className='flex justify-center w-full items-center min-h-[80vh] bg-gray-100'>
+            <Error text='Please login to submit feedback!' />
+        </div>
     }
     return (
         <div className='flex justify-center w-full items-center min-h-[80vh] bg-gray-100'>
@@ -61,7 +63,7 @@ function Feedback() {
 
                 <textarea value={feedback} onChange={(e) => setFeedback(e.target.value)} className='resize-none border border-gray-300 rounded-md p-2 focus:ring-2 focus:ring-blue-200 focus:outline-none w-full' id="message" name="message" rows="4" placeholder="Describe your feedback..." required></textarea><br /><br />
 
-                <button className={`${submitting ? 'bg-gray-600 hover:bg-gray-600' : 'bg-black hover:bg-gray-800'}   text-white p-3 w-full rounded-md font-semibold`} type="submit">
+                <button className={`${submitting ? 'bg-gray-600 hover:bg-gray-600' : 'bg-black hover:bg-gray-800'}  cursor-pointer text-white p-3 w-full rounded-md font-semibold`} type="submit">
                     {submitting ? 'Submitting...' : 'Submit Feedback'}
                 </button>
             </form>

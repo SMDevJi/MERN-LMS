@@ -42,19 +42,24 @@ function CourseDetails() {
         try {
             //console.log(authorization)
             decoded = jwtDecode(authorization);
+            if (decoded) {
+                setDecoded(decoded);
+                if (decoded.enrolledCourses.includes(courseId)) {
+                    setBought(true)
+                } else {
+                    setBought(false)
+                }
+            }
         } catch (err) {
             console.log(err)
             console.error("Invalid token");
             return;
+        } finally {
+            console.log('reached before lc')
+            loadCourse();
         }
 
-        setDecoded(decoded);
-        if (decoded.enrolledCourses.includes(courseId)) {
-            setBought(true)
-        } else {
-            setBought(false)
-        }
-        loadCourse();
+
     }, [authorization, navigate, courseId]);
 
 
@@ -118,12 +123,10 @@ function CourseDetails() {
 
 
 
-
     if (loading) {
         return <div className='wrapper min-h-[80vh] px-4'>
             <Loading />
         </div>
-        
     }
 
     return (
@@ -194,12 +197,16 @@ function CourseDetails() {
                                     <FaBook size={20} />
                                     <span>Language: {course?.language}</span>
                                 </div>
-                                <Button className={`mt-4 w-full flex items-center justify-center gap-2 ${buying ? 'bg-gray-500 hover:bg-gray-500' : ''} `} onClick={handleButtonClick}>
-                                    {bought ? '' : <GiRocket size={20} style={{ transform: 'rotate(270deg)' }} />}
-                                    {buying ? <FaSpinner className="animate-spin" /> : ''}
-                                    {bought ? 'Watch Lectures' : 'Enroll Now'}
+                                {decoded && (decoded.isTutor ? '' :
 
-                                </Button>
+                                    <Button className={`mt-4 w-full flex items-center justify-center gap-2 ${buying ? 'bg-gray-500 hover:bg-gray-500' : ''} `} onClick={handleButtonClick}>
+                                        {bought ? '' : <GiRocket size={20} style={{ transform: 'rotate(270deg)' }} />}
+                                        {buying ? <FaSpinner className="animate-spin" /> : ''}
+                                        {bought ? 'Watch Lectures' : 'Enroll Now'}
+
+                                    </Button>)
+                                }
+
                                 {!bought ?
                                     <Link to={`/watch-course/${courseId}`} className='mt-4 w-full flex items-center justify-center gap-2' >
                                         <Button className='w-full' >
