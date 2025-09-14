@@ -22,7 +22,7 @@ The project uses **Tailwind CSS** and **shadcn/ui** for a sleek, responsive UI, 
 > [https://mern-lms-frontend-1tp8.onrender.com/](https://mern-lms-frontend-1tp8.onrender.com/)
 >
 > 📹 **Demo Video:**  
->[Watch video on youtube](https://youtu.be/ZVTU75JmZYY)
+>[Watch video on youtube](https://youtu.be/_EbJjhbd2zc)
 >  
 > 📸 **Screenshots**
 ><img width="1920" height="1080" alt="Screenshot (431)" src="https://github.com/user-attachments/assets/5ea441ba-815f-49fd-b88c-9f87e6ec19fe" />
