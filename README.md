@@ -23,10 +23,13 @@ The project uses **Tailwind CSS** and **shadcn/ui** for a sleek, responsive UI, 
 >
 > 📹 **Demo Video:**  
 >  
->  
+>  [![Watch the video](https://github.com/user-attachments/assets/aca27a0c-920d-4d81-9642-3202a5ab1e68)](https://youtu.be/ZVTU75JmZYY)
 >  
 > 📸 **Screenshots**
->
+><img width="1920" height="1080" alt="Screenshot (431)" src="https://github.com/user-attachments/assets/5ea441ba-815f-49fd-b88c-9f87e6ec19fe" />
+><img width="1920" height="1080" alt="Screenshot (430)" src="https://github.com/user-attachments/assets/287ac787-b07f-4f81-bbed-02f4e04abdde" />
+><img width="1920" height="1080" alt="Screenshot (429)" src="https://github.com/user-attachments/assets/514bfac0-f76a-4bed-bf2c-5965db8c5786" />
+
 
 ---
 
