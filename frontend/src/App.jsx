@@ -18,6 +18,7 @@ import CourseDetails from './pages/CourseDetails'
 import AddLecture from './pages/AddLecture'
 import PaymentSuccess from './pages/PaymentSuccess'
 import WatchCourse from './pages/WatchCourse'
+import NotFound from './pages/NotFound'
 
 function App() {
 
@@ -39,6 +40,7 @@ function App() {
         <Route path='add-lecture/:courseId' element=<AddLecture /> />
         <Route path='payment-success/:courseId' element=<PaymentSuccess /> />
         <Route path='watch-course/:courseId' element=<WatchCourse /> />
+        <Route path='*' element=<NotFound /> />
       </Route>
     )
   )
